@@ -1,10 +1,5 @@
 import type { Context, Next } from 'hono'
-
-interface RateLimitOptions {
-  windowMs?: number  // Default: 15 minutes
-  max?: number       // Default: 100
-  message?: string   // Default: 'Too many requests, please try again later.'
-}
+import type { RateLimitOptions } from '../types/rate-limiter'
 
 const rateLimit = (options: RateLimitOptions = {}) => {
   const requests = new Map<string, { count: number; reset: number }>()
@@ -16,30 +11,24 @@ const rateLimit = (options: RateLimitOptions = {}) => {
   } = options
 
   return async (c: Context, next: Next) => {
-    const ip = c.req.header('x-forwarded-for') || 'unknown'
     const now = Date.now()
-    
-    const requestInfo = requests.get(ip) || { count: 0, reset: now + windowMs }
-    
+    const ip = c.req.header('x-forwarded-for') || 'unknown'
+    const req = requests.get(ip) || { count: 0, reset: now + windowMs }
+
     // Reset if window has expired
-    if (now > requestInfo.reset) {
-      requestInfo.count = 0
-      requestInfo.reset = now + windowMs
+    if (now > req.reset) {
+      req.count = 0
+      req.reset = now + windowMs
     }
 
-    requestInfo.count++
-    requests.set(ip, requestInfo)
+    req.count++
+    requests.set(ip, req)
 
-    // Set headers
-    c.header('RateLimit-Limit', max.toString())
-    c.header('RateLimit-Remaining', Math.max(0, max - requestInfo.count).toString())
-    c.header('RateLimit-Reset', requestInfo.reset.toString())
+    c.header('RateLimit-Limit', `${max}`)
+    c.header('RateLimit-Remaining', `${Math.max(0, max - req.count)}`)
+    c.header('RateLimit-Reset', `${req.reset}`)
 
-    if (requestInfo.count > max) {
-      return c.json({ message }, 429)
-    }
-
-    await next()
+    return req.count > max ? c.json({ message }, 429) : next()
   }
 }
 

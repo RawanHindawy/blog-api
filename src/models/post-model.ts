@@ -1,10 +1,11 @@
 import { eq } from "drizzle-orm";
 import db from "../db";
-import { posts } from "../db/schemas/post-schema";
+import { posts } from "../db/schema";
 // import { categories } from '../db/schemas/category-schema';
 // import { comments } from '../db/schemas/comment-schema';
 // import { postsTags } from '../db/schemas/post-tags-schema';
 // import { tags } from '../db/schemas/tag-schema';
+
 import type { Post, NewPost } from "../types/post-type";
 
 export const getAllPosts = async (): Promise<Post[]> => {

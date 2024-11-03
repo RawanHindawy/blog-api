@@ -1,4 +1,4 @@
-import { comments } from "../db/schemas/comment-schema";
+import { comments } from "../db/schema";
 import type { Post } from "./post-type";
 
 export type Comment = typeof comments.$inferSelect;

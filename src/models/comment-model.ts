@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import db from "../db";
-import { comments } from "../db/schemas/comment-schema";
+import { comments } from "../db/schema";
 import type { Comment, NewComment } from "../types/comment-type";
 
 export const getAllComments = async (): Promise<Comment[]> => {

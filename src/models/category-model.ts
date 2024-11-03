@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import db from "../db";
-import { categories } from "../db/schemas/category-schema";
+import { categories } from "../db/schema";
 import type { Category, NewCategory } from "../types/category-type";
 
 export const getAllCategories = async (): Promise<Category[]> => {

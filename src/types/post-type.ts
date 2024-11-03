@@ -1,4 +1,4 @@
-import { posts } from "../db/schemas/post-schema";
+import { posts } from "../db/schema";
 import type { Category } from "./category-type";
 import type { Comment } from "./comment-type";
 

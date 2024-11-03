@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import db from "../db";
-import { tags } from "../db/schemas/tag-schema.ts";
+import { tags } from "../db/schema";
 import type { Tag, NewTag } from "../types/tag-type";
 // import { postsTags } from '../db/schemas/post-tags-schema';
 // import { posts } from '../db/schemas/post-schema';

@@ -1,4 +1,4 @@
-import { tags } from "../db/schemas/tag-schema";
+import { tags } from "../db/schema";
 import type { Post } from "./post-type";
 
 export type Tag = typeof tags.$inferSelect;
