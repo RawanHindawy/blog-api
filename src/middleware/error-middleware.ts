@@ -14,17 +14,6 @@ export const errorHandler = (err: Error, c: Context) => {
     );
   }
 
-  // Handle database errors
-//   if (err.message.includes('duplicate key')) {
-//     return c.json(
-//       {
-//         message: 'Resource already exists',
-//         status: 409,
-//       },
-//       409
-//     );
-//   }
-
   if (err.message.includes('not found')) {
     return c.json(
       {

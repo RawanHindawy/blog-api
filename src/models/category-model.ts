@@ -4,26 +4,35 @@ import { categories } from "../db/schema";
 import type { Category, NewCategory } from "../types/category-type";
 import { HTTPException } from "hono/http-exception";
 
-export const getAllCategories = async (): Promise<Category[]> => {
+export const getAllCategories = async (queryParams: Record<string, string>): Promise<{ data: Category[], pagination: { totalPages: number, currentPage: number } } > => {
+  const page = parseInt(queryParams.page) || 1;
+  const pageSize = parseInt(queryParams.pageSize) || 10;
+  const skip = (page - 1) * pageSize;
+
   const categoriesResult = await db.query.categories.findMany({
     with: {
       user: true
-    }
+    },
+    limit: pageSize,
+    offset: skip
   });
 
-  return categoriesResult;
+  const categoriesCount = await db.select({ count: categories.id }).from(categories).then(result => Number(result[0].count));
+
+  return { data: categoriesResult, pagination: { totalPages: Math.ceil(categoriesCount / pageSize), currentPage: page } };
 };
 
 export const getCategoryById = async (
   id: number
 ): Promise<Category | undefined> => {
-  const result = await db
-    .select()
-    .from(categories)
-    .where(eq(categories.id, id))
-    .limit(1);
+  const result = await db.query.categories.findFirst({
+    where: eq(categories.id, id),
+    with: {
+      user: true
+    }
+  });
 
-  return result[0];
+  return result;
 };
 
 export const createCategory = async (

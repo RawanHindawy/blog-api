@@ -37,11 +37,11 @@ export const updatePost = async (c: Context) => {
   const { userId } = c.get('user') ?? 0;
   const body = await c.req.json();
   const post = await postModel.updatePost(id, userId, body);
-  redisClient.del("posts")
+  
   if (!post) {
     return c.json({ error: "Post not found" }, 404);
   }
-
+  redisClient.del("posts")
   return c.json(post, 200);
 };
 

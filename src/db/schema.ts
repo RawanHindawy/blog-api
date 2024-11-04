@@ -1,7 +1,7 @@
 import { pgTable, integer, text, timestamp, primaryKey, foreignKey } from "drizzle-orm/pg-core";
 import { relations } from 'drizzle-orm';
 
-// Users table (1st - no dependencies)
+// Users table 
 export const users = pgTable("users", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   username: text("username").notNull().unique(),
@@ -19,7 +19,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 }));
 
 
-// Categories table (2nd - no dependencies)
+// Categories table 
 export const categories = pgTable("categories", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull().unique(),
@@ -35,7 +35,7 @@ export const categoriesRelations = relations(categories, ({ many, one }) => ({
   posts: many(posts)
 }));
 
-// Tags table (3rd - no dependencies)
+// Tags table 
 export const tags = pgTable("tags", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull().unique(),

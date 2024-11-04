@@ -4,20 +4,36 @@ import { comments } from "../db/schema";
 import type { Comment, NewComment } from "../types/comment-type";
 import { HTTPException } from "hono/http-exception";
 
-export const getAllComments = async (): Promise<Comment[]> => {
-  return await db.select().from(comments);
+export const getAllComments = async (queryParams: Record<string, string>): Promise<{ data: Comment[], pagination: { totalPages: number, currentPage: number } }> => {
+  
+  const page = parseInt(queryParams.page) || 1;
+  const pageSize = parseInt(queryParams.pageSize) || 10;
+  const skip = (page - 1) * pageSize;
+
+  const commentsResult = await db.query.comments.findMany({
+    with: {
+      user: true
+    },
+    limit: pageSize,
+    offset: skip
+  });
+
+  const commentsCount = await db.select({ count: comments.id }).from(comments).then(result => Number(result[0].count));
+
+  return { data: commentsResult, pagination: { totalPages: Math.ceil(commentsCount / pageSize), currentPage: page } };
 };
 
 export const getCommentById = async (
   id: string
 ): Promise<Comment | undefined> => {
-  const result = await db
-    .select()
-    .from(comments)
-    .where(eq(comments.id, parseInt(id)))
-    .limit(1);
+  const result = await db.query.comments.findFirst({
+    where: eq(comments.id, parseInt(id)),
+    with: {
+      user: true
+    }
+  });
 
-  return result[0];
+  return result;
 };
 
 export const createComment = async (data: NewComment, userId: number): Promise<Comment> => {

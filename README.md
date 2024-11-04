@@ -39,12 +39,6 @@ Run the development server:
 bun run dev
 ```
 
-### Production
-Start the production server:
-```bash
-bun run start
-```
-
 ## API Endpoints
 
 ### Categories
@@ -74,11 +68,3 @@ bun run start
 - `GET /api/tags/:id` - Get tag by ID
 - `PUT /api/tags/:id` - Update tag
 - `DELETE /api/tags/:id` - Delete tag
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request

@@ -2,18 +2,35 @@ import { eq } from "drizzle-orm";
 import db from "../db";
 import { tags } from "../db/schema";
 import type { Tag, NewTag } from "../types/tag-type";
-import { HTTPException } from "hono/http-exception";
-// import { postsTags } from '../db/schemas/post-tags-schema';
-// import { posts } from '../db/schemas/post-schema';
+import { HTTPException } from "hono/http-exception"
 
-export const getAllTags = async (): Promise<Tag[]> => {
-  return await db.select().from(tags);
+export const getAllTags = async (queryParams: Record<string, string>): Promise<{ data: Tag[], pagination: { totalPages: number, currentPage: number } }> => {
+  const page = parseInt(queryParams.page) || 1;
+  const pageSize = parseInt(queryParams.pageSize) || 10;
+  const skip = (page - 1) * pageSize;
+
+  const tagsResult = await db.query.tags.findMany({
+    with: {
+      user: true
+    },
+    limit: pageSize,
+    offset: skip
+  });
+
+  const tagsCount = await db.select({ count: tags.id }).from(tags).then(result => Number(result[0].count));
+
+  return { data: tagsResult, pagination: { totalPages: Math.ceil(tagsCount / pageSize), currentPage: page } };
 };
 
 export const getTagById = async (id: number): Promise<Tag | undefined> => {
-  const result = await db.select().from(tags).where(eq(tags.id, id)).limit(1);
+  const result = await db.query.tags.findFirst({
+    where: eq(tags.id, id),
+    with: {
+      user: true
+    }
+  });
 
-  return result[0];
+  return result;
 };
 
 export const createTag = async (tagData: NewTag,userId:number): Promise<Tag> => {
