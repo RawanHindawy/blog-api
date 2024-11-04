@@ -1,15 +1,17 @@
-// import { Hono } from "hono";
-// import * as authController from "../controllers/auth-controller.ts";
+import { Hono } from "hono";
+import * as authController from "../controllers/auth-controller.ts";
 // import { authMiddleware } from "../middleware/auth-middleware";
-// import rateLimit from "../middleware/rate-limiter.ts";
+import rateLimit from "../middleware/rate-limiter.ts";
+import { validateData } from "../middleware/validation-middleware.ts";
+import { loginSchema } from "../validations/LoginSchema.ts";
 
 
-// export const authRoute = () => {
-//   const router = new Hono();
+export const authRoute = () => {
+    const router = new Hono();
 
-//   router.post("/login", rateLimit(), authController.login);
-//   router.post("/logout", authMiddleware, authController.logout);
-//   router.post("/register", authController.register);
+    router.post("/login", rateLimit(), validateData(loginSchema), authController.login);
+    //   router.post("/logout", authMiddleware, authController.logout);
+    //   router.post("/register", authController.register);
 
-//   return router;
-// };
+    return router;
+};

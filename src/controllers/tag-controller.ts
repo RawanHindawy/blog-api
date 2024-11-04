@@ -1,5 +1,6 @@
 import type { Context } from "hono";
 import * as tagModel from "../models/tag-model.ts";
+import { errorHandler } from "../middleware/error-middleware.ts";
 
 export const getAllTags = async (c: Context) => {
   const tags = await tagModel.getAllTags();
@@ -19,14 +20,16 @@ export const getTagById = async (c: Context) => {
 
 export const createTag = async (c: Context) => {
   const tagData = await c.req.json();
-  const tag = await tagModel.createTag(tagData);
+  const {userId} = c.get("user");
+  const tag = await tagModel.createTag(tagData,userId);
   return c.json(tag, 201);
 };
 
 export const updateTag = async (c: Context) => {
   const id = parseInt(c.req.param("id"), 10);
+  const { userId } = c.get('user') ?? 0;
   const tagData = await c.req.json();
-  const tag = await tagModel.updateTag(id, tagData);
+  const tag = await tagModel.updateTag(id, userId, tagData);
 
   if (!tag) {
     return c.json({ error: "Tag not found" }, 404);
@@ -36,12 +39,13 @@ export const updateTag = async (c: Context) => {
 };
 
 export const deleteTag = async (c: Context) => {
-  const id = parseInt(c.req.param("id"), 10);
-  const success = await tagModel.deleteTag(id);
+  try {
+    const id = parseInt(c.req.param("id"), 10);
+    const { userId } = c.get('user') ?? 0;
+    await tagModel.deleteTag(id, userId);
 
-  if (!success) {
-    return c.json({ error: "Tag not found" }, 404);
+    return c.json({ message: "Tag deleted successfully" }, 200);
+  } catch (error) {
+    return errorHandler(error as Error, c);
   }
-
-  return c.json({ message: "Tag deleted successfully" }, 200);
 };

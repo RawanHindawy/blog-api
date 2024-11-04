@@ -10,19 +10,46 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow().notNull()
 });
 
+// Relations definitions
+export const usersRelations = relations(users, ({ many }) => ({
+  posts: many(posts),
+  comments: many(comments),
+  tags: many(tags),
+  categories: many(categories)
+}));
+
+
 // Categories table (2nd - no dependencies)
 export const categories = pgTable("categories", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull().unique(),
-  description: text("description")
+  description: text("description"),
+  userId: integer("user_id").notNull()
 });
+
+export const categoriesRelations = relations(categories, ({ many, one }) => ({
+  user: one(users, {
+    fields: [categories.userId],
+    references: [users.id],
+  }),
+  posts: many(posts)
+}));
 
 // Tags table (3rd - no dependencies)
 export const tags = pgTable("tags", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull().unique(),
-  description: text("description")
+  description: text("description"),
+  userId: integer("user_id").notNull()
 });
+
+export const tagsRelations = relations(tags, ({ one, many }) => ({
+  user: one(users, {
+    fields: [tags.userId],
+    references: [users.id],
+  }),
+  posts: many(postTags)
+}));
 
 // Posts table
 export const posts = pgTable("posts", {
@@ -32,73 +59,7 @@ export const posts = pgTable("posts", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   userId: integer("user_id").notNull(),
   categoryId: integer("category_id")
-}, (table) => {
-  return {
-    userFk: foreignKey({
-      columns: [table.userId],
-      foreignColumns: [users.id],
-      name: 'posts_user_id_fk'
-    }),
-    categoryFk: foreignKey({
-      columns: [table.categoryId],
-      foreignColumns: [categories.id],
-      name: 'posts_category_id_fk'
-    })
-  }
 });
-
-// Comments table
-export const comments = pgTable("comments", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  content: text("content").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  postId: integer("post_id").notNull(),
-  userId: integer("user_id").notNull()
-}, (table) => {
-  return {
-    userFk: foreignKey({
-      columns: [table.userId],
-      foreignColumns: [users.id],
-      name: 'comments_user_id_fk'
-    }),
-    postFk: foreignKey({
-      columns: [table.postId],
-      foreignColumns: [posts.id],
-      name: 'comments_post_id_fk'
-    })
-  }
-});
-
-// Post Tags junction table
-export const postTags = pgTable("post_tags", {
-  postId: integer("post_id").notNull(),
-  tagId: integer("tag_id").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull()
-}, (table) => {
-  return {
-    pk: primaryKey({ columns: [table.postId, table.tagId] }),
-    postFk: foreignKey({
-      columns: [table.postId],
-      foreignColumns: [posts.id],
-      name: 'post_tags_post_id_fk'
-    }),
-    tagFk: foreignKey({
-      columns: [table.tagId],
-      foreignColumns: [tags.id],
-      name: 'post_tags_tag_id_fk'
-    })
-  }
-});
-
-// Relations definitions
-export const usersRelations = relations(users, ({ many }) => ({
-  posts: many(posts),
-  comments: many(comments)
-}));
-
-export const categoriesRelations = relations(categories, ({ many }) => ({
-  posts: many(posts)
-}));
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
   user: one(users, {
@@ -113,6 +74,15 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
   tags: many(postTags)
 }));
 
+// Comments table
+export const comments = pgTable("comments", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  postId: integer("post_id"),
+  userId: integer("user_id").notNull()
+});
+
 export const commentsRelations = relations(comments, ({ one }) => ({
   user: one(users, {
     fields: [comments.userId],
@@ -124,11 +94,19 @@ export const commentsRelations = relations(comments, ({ one }) => ({
   })
 }));
 
-export const tagsRelations = relations(tags, ({ many }) => ({
-  posts: many(postTags)
-}));
+// Post Tags junction table
+export const postTags = pgTable("post_to_tags", {
+  postId: integer("post_id").notNull().references(() => posts.id),
+  tagId: integer("tag_id").notNull().references(() => tags.id),
+  createdAt: timestamp("created_at").defaultNow().notNull()
+}, (table) => {
+  return {
+    pk: primaryKey({ columns: [table.postId, table.tagId] }),
+  }
+});
 
-export const postTagsRelations = relations(postTags, ({ one }) => ({
+
+export const postsToTagsRelations = relations(postTags, ({ one }) => ({
   post: one(posts, {
     fields: [postTags.postId],
     references: [posts.id],

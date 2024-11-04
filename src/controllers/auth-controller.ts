@@ -1,5 +1,5 @@
-// import type { Context } from "hono";
-// import * as AuthModel from "../models/auth-model";
+import type { Context } from "hono";
+import * as AuthModel from "../models/auth-model";
 
 // export const register = async (c: Context) => {
 //   const { username, registrationRequest } = await c.req.json();
@@ -7,11 +7,15 @@
 //   return c.json(result, 201);
 // };
 
-// export const login = async (c: Context) => {
-//   const { username, loginRequest } = await c.req.json();
-//   const result = await AuthModel.login(username, loginRequest);
-//   return c.json(result);
-// };
+export const login = async (c: Context) => {
+    try {
+        const { username, password } = await c.req.json();
+        const result = await AuthModel.login(username, password);
+        return c.json(result);
+    } catch (error) {
+        return c.json({ error: (error as Error).message }, 400);
+    }
+};
 
 // export const logout = async (c: Context) => {
 //   const sessionToken = c.req.header("Authorization")?.split(" ")[1];

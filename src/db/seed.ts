@@ -16,6 +16,14 @@ const main = async () => {
 
     console.log("Seed start");
 
+    // empty database
+    await db.delete(comments).execute();
+    await db.delete(postTags).execute();
+    await db.delete(tags).execute();
+    await db.delete(posts).execute();
+    await db.delete(users).execute();
+    await db.delete(categories).execute();
+
     // 1. Create Users
     const userData = Array.from({ length: 10 }, () => ({
         username: faker.internet.userName(),
@@ -26,17 +34,17 @@ const main = async () => {
 
     // 2. Create Categories
     const categoryData = [
-        { name: "Technology", description: "Tech related posts" },
-        { name: "Travel", description: "Travel experiences" },
-        { name: "Food", description: "Cooking and restaurants" },
+        { name: "Technology", description: "Tech related posts", userId: createdUsers[Math.floor(Math.random() * createdUsers.length)].id },
+        { name: "Travel", description: "Travel experiences", userId: createdUsers[Math.floor(Math.random() * createdUsers.length)].id },
+        { name: "Food", description: "Cooking and restaurants", userId: createdUsers[Math.floor(Math.random() * createdUsers.length)].id },
     ];
     const createdCategories = await db.insert(categories).values(categoryData).returning();
 
     // 3. Create Tags
     const tagData = [
-        { name: "JavaScript", description: "JS related" },
-        { name: "Python", description: "Python related" },
-        { name: "Travel Tips", description: "Travel advice" },
+        { name: "JavaScript", description: "JS related", userId: createdUsers[Math.floor(Math.random() * createdUsers.length)].id },
+        { name: "Python", description: "Python related", userId: createdUsers[Math.floor(Math.random() * createdUsers.length)].id },
+        { name: "Travel Tips", description: "Travel advice", userId: createdUsers[Math.floor(Math.random() * createdUsers.length)].id },
     ];
     const createdTags = await db.insert(tags).values(tagData).returning();
 

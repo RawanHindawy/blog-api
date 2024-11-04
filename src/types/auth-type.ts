@@ -23,16 +23,17 @@
 //   user: User;
 // };
 
-export interface User {
-  id: string;
+export type User = {
+  id: number;
   username: string;
-  serverPublicKey: string;
-  serverPrivateKey: string;
-  verifier: string;
+  hashedPassword: string;
+  salt: string;
+  createdAt: number;
 }
 
-export interface Session {
-  userId: string;
-  sessionKey: string;
+export type Session = {
+  userId: number;
+  username: string;
+  createdAt: number;
   expiresAt: number;
-}
+};

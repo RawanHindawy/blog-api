@@ -1,5 +1,5 @@
 {
-  "id": "7ccf4f13-eec0-4618-a091-2231925855be",
+  "id": "d4a7dea8-900b-4284-9d32-5c4e729610e7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -36,6 +36,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
@@ -92,7 +98,7 @@
           "name": "post_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "user_id": {
           "name": "user_id",
@@ -102,42 +108,15 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "comments_user_id_fk": {
-          "name": "comments_user_id_fk",
-          "tableFrom": "comments",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "comments_post_id_fk": {
-          "name": "comments_post_id_fk",
-          "tableFrom": "comments",
-          "tableTo": "posts",
-          "columnsFrom": [
-            "post_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.post_tags": {
-      "name": "post_tags",
+    "public.post_to_tags": {
+      "name": "post_to_tags",
       "schema": "",
       "columns": {
         "post_id": {
@@ -162,9 +141,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "post_tags_post_id_fk": {
-          "name": "post_tags_post_id_fk",
-          "tableFrom": "post_tags",
+        "post_to_tags_post_id_posts_id_fk": {
+          "name": "post_to_tags_post_id_posts_id_fk",
+          "tableFrom": "post_to_tags",
           "tableTo": "posts",
           "columnsFrom": [
             "post_id"
@@ -175,9 +154,9 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "post_tags_tag_id_fk": {
-          "name": "post_tags_tag_id_fk",
-          "tableFrom": "post_tags",
+        "post_to_tags_tag_id_tags_id_fk": {
+          "name": "post_to_tags_tag_id_tags_id_fk",
+          "tableFrom": "post_to_tags",
           "tableTo": "tags",
           "columnsFrom": [
             "tag_id"
@@ -190,8 +169,8 @@
         }
       },
       "compositePrimaryKeys": {
-        "post_tags_post_id_tag_id_pk": {
-          "name": "post_tags_post_id_tag_id_pk",
+        "post_to_tags_post_id_tag_id_pk": {
+          "name": "post_to_tags_post_id_tag_id_pk",
           "columns": [
             "post_id",
             "tag_id"
@@ -257,34 +236,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "posts_user_id_fk": {
-          "name": "posts_user_id_fk",
-          "tableFrom": "posts",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "posts_category_id_fk": {
-          "name": "posts_category_id_fk",
-          "tableFrom": "posts",
-          "tableTo": "categories",
-          "columnsFrom": [
-            "category_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -323,6 +275,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
