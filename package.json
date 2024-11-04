@@ -5,6 +5,8 @@
   "scripts": {
     "start": "bun run --hot src/server.ts",
     "dev": "nodemon src/server.ts",
+    "drizzle:seed": "bun run src/db/seed.ts",
+    "db:push": "bun drizzle-kit push",
     "generate": "bun drizzle-kit generate",
     "migrate": "bun drizzle-kit migrate",
     "studio": "drizzle-kit studio",
@@ -16,21 +18,24 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",
+    "@faker-js/faker": "^9.2.0",
     "@types/bun": "latest",
     "@types/pg": "^8.11.10",
     "drizzle-kit": "^0.27.1",
-    "globals": "^15.11.0",
-    "tsx": "^4.19.2",
-    "typescript-eslint": "^8.12.2",
+    "esbuild-register": "^3.6.0",
     "eslint-config-prettier": "latest",
     "eslint-plugin-prettier": "latest",
-    "prettier": "latest"
+    "globals": "^15.11.0",
+    "prettier": "latest",
+    "tsx": "^4.19.2",
+    "typescript-eslint": "^8.12.2"
   },
   "peerDependencies": {
     "typescript": "^5.6.3"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.4",
+    "@hono/prometheus": "^1.0.1",
     "@hono/zod-validator": "^0.4.1",
     "@typescript-eslint/eslint-plugin": "^8.12.2",
     "@typescript-eslint/parser": "^8.12.2",
