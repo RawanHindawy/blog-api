@@ -31,6 +31,40 @@ cp .env.example .env
 ```
 Then edit the `.env` file with your configuration.
 
+## Database Installation
+
+pull the docker image
+
+```bash
+docker pull postgres
+
+# start the container
+
+docker run --name drizzle-postgres -e POSTGRES_PASSWORD=mypassword -d -p 5432:5432 postgres
+
+```
+
+## Redis Installation
+
+pull the Redis image
+
+```bash
+docker pull redis
+
+# start the container
+
+docker run -it --rm --link my-redis:redis redis redis-cli -h redis
+```
+## Database Generate Migrations
+
+```bash
+bun run db:generate
+```
+or
+
+```bash
+bun run db:migrate
+```
 ## Usage
 
 ### Development
