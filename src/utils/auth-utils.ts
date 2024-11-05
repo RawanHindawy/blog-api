@@ -10,8 +10,8 @@ export const createSession = (userId: number, username: string): Session => {
     userId,
     username,
     createdAt: Date.now(),
-    expiresAt: Date.now() + (12 * 60 * 60 * 1000) // 12 hours
+    expiresAt: Date.now() + 12 * 60 * 60 * 1000, // 12 hours
   };
 };
 
-export const SESSION_EXPIRY_SECONDS = 12 * 60 * 60; // 12 hours in seconds 
+export const SESSION_EXPIRY_SECONDS = 12 * 60 * 60; // 12 hours in seconds

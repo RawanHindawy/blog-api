@@ -4,8 +4,12 @@ import { posts } from "../db/schema";
 import type { Post, NewPost } from "../types/post-type";
 import { HTTPException } from "hono/http-exception";
 
-export const getAllPosts = async (queryParams: Record<string, string>): Promise<{ data: Post[], pagination: { totalPages: number, currentPage: number } }> => {
-
+export const getAllPosts = async (
+  queryParams: Record<string, string>
+): Promise<{
+  data: Post[];
+  pagination: { totalPages: number; currentPage: number };
+}> => {
   const page = parseInt(queryParams.page) || 1;
   const pageSize = parseInt(queryParams.pageSize) || 10;
   const skip = (page - 1) * pageSize;
@@ -14,16 +18,24 @@ export const getAllPosts = async (queryParams: Record<string, string>): Promise<
     with: {
       user: true,
       category: true,
-      tags: true
+      tags: true,
     },
     limit: pageSize,
-    offset: skip
-  })
+    offset: skip,
+  });
 
-  const postsCount = await db.select({ count: posts.id }).from(posts).then(result => Number(result[0].count));
+  const postsCount = await db
+    .select({ count: posts.id })
+    .from(posts)
+    .then((result) => Number(result[0].count));
 
-  return { data: postsResult, pagination: { totalPages: Math.ceil(postsCount / pageSize), currentPage: page } };
-
+  return {
+    data: postsResult,
+    pagination: {
+      totalPages: Math.ceil(postsCount / pageSize),
+      currentPage: page,
+    },
+  };
 };
 
 export const getPostById = async (id: string): Promise<Post | undefined> => {
@@ -32,25 +44,37 @@ export const getPostById = async (id: string): Promise<Post | undefined> => {
     with: {
       user: true,
       category: true,
-      tags: true
-    }
-  })
+      tags: true,
+    },
+  });
 
   return result;
 };
 
-export const createPost = async (data: NewPost, userId: number): Promise<Post> => {
-  const result = await db.insert(posts).values({ ...data, userId }).returning();
+export const createPost = async (
+  data: NewPost,
+  userId: number
+): Promise<Post> => {
+  const result = await db
+    .insert(posts)
+    .values({ ...data, userId })
+    .returning();
 
   return result[0];
 };
 
-export const updatePost = async (id: string, userId: number, data: Partial<NewPost>): Promise<Post | undefined> => {
+export const updatePost = async (
+  id: string,
+  userId: number,
+  data: Partial<NewPost>
+): Promise<Post | undefined> => {
   const post = await getPostById(id);
 
   if (post) {
     if (post.userId !== userId) {
-      throw new HTTPException(403, { message: "You are not authorized to update this post" });
+      throw new HTTPException(403, {
+        message: "You are not authorized to update this post",
+      });
     }
 
     const result = await db
@@ -65,13 +89,17 @@ export const updatePost = async (id: string, userId: number, data: Partial<NewPo
   }
 };
 
-export const deletePost = async (id: string, userId: number): Promise<boolean> => {
+export const deletePost = async (
+  id: string,
+  userId: number
+): Promise<boolean> => {
   const post = await getPostById(id);
 
   if (post) {
-
     if (post.userId !== userId)
-      throw new HTTPException(403, { message: "You are not authorized to delete this post" });
+      throw new HTTPException(403, {
+        message: "You are not authorized to delete this post",
+      });
 
     await db
       .delete(posts)
@@ -79,8 +107,7 @@ export const deletePost = async (id: string, userId: number): Promise<boolean> =
       .returning();
 
     return true;
-  }
-  else {
+  } else {
     throw new HTTPException(404, { message: "Post not found" });
   }
 };

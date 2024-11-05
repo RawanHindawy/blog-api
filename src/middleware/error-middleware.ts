@@ -1,8 +1,8 @@
-import type{ Context } from 'hono';
-import { HTTPException } from 'hono/http-exception';
+import type { Context } from "hono";
+import { HTTPException } from "hono/http-exception";
 
 export const errorHandler = (err: Error, c: Context) => {
-  console.error('Error:', err);
+  console.error("Error:", err);
 
   if (err instanceof HTTPException) {
     return c.json(
@@ -14,30 +14,36 @@ export const errorHandler = (err: Error, c: Context) => {
     );
   }
 
-  if (err.message.includes('not found')) {
+  if (err.message.includes("not found")) {
     return c.json(
       {
-        message: 'Resource not found',
+        message: "Resource not found",
         status: 404,
       },
       404
     );
   }
 
-  if (err.message.includes('unauthorized') || err.message.includes('invalid token')) {
+  if (
+    err.message.includes("unauthorized") ||
+    err.message.includes("invalid token")
+  ) {
     return c.json(
       {
-        message: 'Unauthorized',
+        message: "Unauthorized",
         status: 401,
       },
       401
     );
   }
 
-  if (err.message.includes('forbidden') || err.message.includes('not allowed')) {
+  if (
+    err.message.includes("forbidden") ||
+    err.message.includes("not allowed")
+  ) {
     return c.json(
       {
-        message: 'Forbidden',
+        message: "Forbidden",
         status: 403,
       },
       403
@@ -46,7 +52,7 @@ export const errorHandler = (err: Error, c: Context) => {
 
   return c.json(
     {
-      message: 'Internal Server Error',
+      message: "Internal Server Error",
       status: 500,
     },
     500

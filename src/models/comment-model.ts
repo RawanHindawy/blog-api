@@ -4,23 +4,36 @@ import { comments } from "../db/schema";
 import type { Comment, NewComment } from "../types/comment-type";
 import { HTTPException } from "hono/http-exception";
 
-export const getAllComments = async (queryParams: Record<string, string>): Promise<{ data: Comment[], pagination: { totalPages: number, currentPage: number } }> => {
-  
+export const getAllComments = async (
+  queryParams: Record<string, string>
+): Promise<{
+  data: Comment[];
+  pagination: { totalPages: number; currentPage: number };
+}> => {
   const page = parseInt(queryParams.page) || 1;
   const pageSize = parseInt(queryParams.pageSize) || 10;
   const skip = (page - 1) * pageSize;
 
   const commentsResult = await db.query.comments.findMany({
     with: {
-      user: true
+      user: true,
     },
     limit: pageSize,
-    offset: skip
+    offset: skip,
   });
 
-  const commentsCount = await db.select({ count: comments.id }).from(comments).then(result => Number(result[0].count));
+  const commentsCount = await db
+    .select({ count: comments.id })
+    .from(comments)
+    .then((result) => Number(result[0].count));
 
-  return { data: commentsResult, pagination: { totalPages: Math.ceil(commentsCount / pageSize), currentPage: page } };
+  return {
+    data: commentsResult,
+    pagination: {
+      totalPages: Math.ceil(commentsCount / pageSize),
+      currentPage: page,
+    },
+  };
 };
 
 export const getCommentById = async (
@@ -29,28 +42,37 @@ export const getCommentById = async (
   const result = await db.query.comments.findFirst({
     where: eq(comments.id, parseInt(id)),
     with: {
-      user: true
-    }
+      user: true,
+    },
   });
 
   return result;
 };
 
-export const createComment = async (data: NewComment, userId: number): Promise<Comment> => {
-  const result = await db.insert(comments).values({...data,userId}).returning();
+export const createComment = async (
+  data: NewComment,
+  userId: number
+): Promise<Comment> => {
+  const result = await db
+    .insert(comments)
+    .values({ ...data, userId })
+    .returning();
 
   return result[0];
 };
 
 export const updateComment = async (
-  id: string, userId:number,
+  id: string,
+  userId: number,
   data: Partial<NewComment>
 ): Promise<Comment | undefined> => {
   const comment = await getCommentById(id);
 
-  if (comment){
+  if (comment) {
     if (comment.userId !== userId) {
-      throw new HTTPException(403, { message: "You are not authorized to update this comment" });
+      throw new HTTPException(403, {
+        message: "You are not authorized to update this comment",
+      });
     }
 
     const result = await db
@@ -65,20 +87,25 @@ export const updateComment = async (
   }
 };
 
-export const deleteComment = async (id: string, userId:number): Promise<boolean> => {
+export const deleteComment = async (
+  id: string,
+  userId: number
+): Promise<boolean> => {
   const comment = await getCommentById(id);
 
-  if (comment){
+  if (comment) {
     if (comment.userId !== userId) {
-      throw new HTTPException(403, { message: "You are not authorized to delete this comment" });
+      throw new HTTPException(403, {
+        message: "You are not authorized to delete this comment",
+      });
     }
-  await db
-    .delete(comments)
-    .where(eq(comments.id, parseInt(id)))
-    .returning();
+    await db
+      .delete(comments)
+      .where(eq(comments.id, parseInt(id)))
+      .returning();
 
     return true;
-  }else {
+  } else {
     throw new HTTPException(404, { message: "Comment not found" });
   }
 };

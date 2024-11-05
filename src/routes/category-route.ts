@@ -9,8 +9,18 @@ export const categoryRoute = () => {
 
   router.get("/", categoryController.getAllCategories);
   router.get("/:id", categoryController.getCategoryById);
-  router.post("/", authMiddleware, validateData(categorySchema), categoryController.createCategory);
-  router.put("/:id", authMiddleware, validateData(categorySchema), categoryController.updateCategory);
+  router.post(
+    "/",
+    authMiddleware,
+    validateData(categorySchema),
+    categoryController.createCategory
+  );
+  router.put(
+    "/:id",
+    authMiddleware,
+    validateData(categorySchema),
+    categoryController.updateCategory
+  );
   router.delete("/:id", authMiddleware, categoryController.deleteCategory);
 
   return router;

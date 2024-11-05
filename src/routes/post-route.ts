@@ -9,8 +9,18 @@ export const postRoute = () => {
 
   router.get("/", postController.getAllPosts);
   router.get("/:id", postController.getPostById);
-  router.post("/", authMiddleware,validateData(postSchema), postController.createPost);
-  router.put("/:id", authMiddleware, validateData(postSchema), postController.updatePost);
+  router.post(
+    "/",
+    authMiddleware,
+    validateData(postSchema),
+    postController.createPost
+  );
+  router.put(
+    "/:id",
+    authMiddleware,
+    validateData(postSchema),
+    postController.updatePost
+  );
   router.delete("/:id", authMiddleware, postController.deletePost);
 
   return router;

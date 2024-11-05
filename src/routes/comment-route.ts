@@ -9,8 +9,18 @@ export const commentRoute = () => {
 
   router.get("/", commentController.getAllComments);
   router.get("/:id", commentController.getCommentById);
-  router.post("/", authMiddleware, validateData(commentSchema), commentController.createComment);
-  router.put("/:id", authMiddleware, validateData(commentSchema), commentController.updateComment);
+  router.post(
+    "/",
+    authMiddleware,
+    validateData(commentSchema),
+    commentController.createComment
+  );
+  router.put(
+    "/:id",
+    authMiddleware,
+    validateData(commentSchema),
+    commentController.updateComment
+  );
   router.delete("/:id", authMiddleware, commentController.deleteComment);
 
   return router;

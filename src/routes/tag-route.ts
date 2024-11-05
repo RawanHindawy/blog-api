@@ -9,8 +9,18 @@ export const tagRoute = () => {
 
   router.get("/", tagController.getAllTags);
   router.get("/:id", tagController.getTagById);
-  router.post("/", authMiddleware, validateData(tagSchema), tagController.createTag);
-  router.put("/:id", authMiddleware, validateData(tagSchema), tagController.updateTag);
+  router.post(
+    "/",
+    authMiddleware,
+    validateData(tagSchema),
+    tagController.createTag
+  );
+  router.put(
+    "/:id",
+    authMiddleware,
+    validateData(tagSchema),
+    tagController.updateTag
+  );
   router.delete("/:id", authMiddleware, tagController.deleteTag);
 
   return router;

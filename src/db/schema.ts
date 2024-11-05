@@ -1,13 +1,19 @@
-import { pgTable, integer, text, timestamp, primaryKey, foreignKey } from "drizzle-orm/pg-core";
-import { relations } from 'drizzle-orm';
+import {
+  pgTable,
+  integer,
+  text,
+  timestamp,
+  primaryKey,
+} from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
-// Users table 
+// Users table
 export const users = pgTable("users", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   username: text("username").notNull().unique(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull()
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // Relations definitions
@@ -15,16 +21,15 @@ export const usersRelations = relations(users, ({ many }) => ({
   posts: many(posts),
   comments: many(comments),
   tags: many(tags),
-  categories: many(categories)
+  categories: many(categories),
 }));
 
-
-// Categories table 
+// Categories table
 export const categories = pgTable("categories", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull().unique(),
   description: text("description"),
-  userId: integer("user_id").notNull()
+  userId: integer("user_id").notNull(),
 });
 
 export const categoriesRelations = relations(categories, ({ many, one }) => ({
@@ -32,15 +37,15 @@ export const categoriesRelations = relations(categories, ({ many, one }) => ({
     fields: [categories.userId],
     references: [users.id],
   }),
-  posts: many(posts)
+  posts: many(posts),
 }));
 
-// Tags table 
+// Tags table
 export const tags = pgTable("tags", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull().unique(),
   description: text("description"),
-  userId: integer("user_id").notNull()
+  userId: integer("user_id").notNull(),
 });
 
 export const tagsRelations = relations(tags, ({ one, many }) => ({
@@ -48,7 +53,7 @@ export const tagsRelations = relations(tags, ({ one, many }) => ({
     fields: [tags.userId],
     references: [users.id],
   }),
-  posts: many(postTags)
+  posts: many(postTags),
 }));
 
 // Posts table
@@ -58,7 +63,7 @@ export const posts = pgTable("posts", {
   content: text("content").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   userId: integer("user_id").notNull(),
-  categoryId: integer("category_id")
+  categoryId: integer("category_id"),
 });
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
@@ -71,7 +76,7 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
     references: [categories.id],
   }),
   comments: many(comments),
-  tags: many(postTags)
+  tags: many(postTags),
 }));
 
 // Comments table
@@ -80,7 +85,7 @@ export const comments = pgTable("comments", {
   content: text("content").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   postId: integer("post_id"),
-  userId: integer("user_id").notNull()
+  userId: integer("user_id").notNull(),
 });
 
 export const commentsRelations = relations(comments, ({ one }) => ({
@@ -91,20 +96,27 @@ export const commentsRelations = relations(comments, ({ one }) => ({
   post: one(posts, {
     fields: [comments.postId],
     references: [posts.id],
-  })
+  }),
 }));
 
 // Post Tags junction table
-export const postTags = pgTable("post_to_tags", {
-  postId: integer("post_id").notNull().references(() => posts.id),
-  tagId: integer("tag_id").notNull().references(() => tags.id),
-  createdAt: timestamp("created_at").defaultNow().notNull()
-}, (table) => {
-  return {
-    pk: primaryKey({ columns: [table.postId, table.tagId] }),
+export const postTags = pgTable(
+  "post_to_tags",
+  {
+    postId: integer("post_id")
+      .notNull()
+      .references(() => posts.id),
+    tagId: integer("tag_id")
+      .notNull()
+      .references(() => tags.id),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => {
+    return {
+      pk: primaryKey({ columns: [table.postId, table.tagId] }),
+    };
   }
-});
-
+);
 
 export const postsToTagsRelations = relations(postTags, ({ one }) => ({
   post: one(posts, {
@@ -114,5 +126,5 @@ export const postsToTagsRelations = relations(postTags, ({ one }) => ({
   tag: one(tags, {
     fields: [postTags.tagId],
     references: [tags.id],
-  })
+  }),
 }));
