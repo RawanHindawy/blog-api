@@ -15,6 +15,7 @@ A RESTful API for managing a blog system built with Hono and Bun.
 - Error handling
 
 ## Prerequisites
+
 - Node.js (v18 or higher)
 - PostgreSQL (v14 or higher)
 - Redis (v6 or higher)
@@ -47,8 +48,8 @@ DATABASE_URL
 REDIS_URL
 NODE_ENV
 
-```
-    
+````
+
 ## Database Installation
 
 pull the docker image
@@ -60,7 +61,7 @@ docker pull postgres
 
 docker run --name drizzle-postgres -e POSTGRES_PASSWORD=mypassword -d -p 5432:5432 postgres
 
-```
+````
 
 ## Redis Installation
 
@@ -135,6 +136,7 @@ bun run dev
 ### Authentication Routes
 
 #### Register User
+
 ```typescript
 POST /auth/register
 Content-Type: application/json
@@ -147,6 +149,7 @@ Content-Type: application/json
 ```
 
 #### Login
+
 ```typescript
 POST /auth/login
 Content-Type: application/json
@@ -160,16 +163,19 @@ Content-Type: application/json
 ### Blog Posts Routes Example
 
 #### Get All Posts
+
 ```typescript
 GET /posts
 ```
 
 #### Get Single Post
+
 ```typescript
 GET /posts/:id
 ```
 
 #### Create Post
+
 ```typescript
 POST /posts
 Authorization: Bearer <token>
@@ -182,6 +188,7 @@ Content-Type: application/json
 ```
 
 #### Update Post
+
 ```typescript
 PUT /posts/:id
 Authorization: Bearer <token>
@@ -194,6 +201,7 @@ Content-Type: application/json
 ```
 
 #### Delete Post
+
 ```typescript
 DELETE /posts/:id
 Authorization: Bearer <token>
@@ -202,9 +210,10 @@ Authorization: Bearer <token>
 ## Rate Limiting
 
 The API implements rate limiting to prevent abuse. Current settings:
+
 - Window: 15 minutes
 - Max Requests: 100 per IP
-- Headers: 
+- Headers:
   - `RateLimit-Limit`
   - `RateLimit-Remaining`
   - `RateLimit-Reset`

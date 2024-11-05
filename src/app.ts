@@ -3,8 +3,8 @@ import mainRouter from "./routes/main-routes.ts";
 import { errorHandler } from "./middleware/error-middleware";
 import { logger } from "hono/logger";
 import { prometheus } from "@hono/prometheus";
-import { secureHeaders } from 'hono/secure-headers';
-import { prettyJSON } from 'hono/pretty-json';
+import { secureHeaders } from "hono/secure-headers";
+import { prettyJSON } from "hono/pretty-json";
 
 export const createApp = () => {
   const app = new Hono();
@@ -18,8 +18,8 @@ export const createApp = () => {
   app.route("/api", mainRouter());
 
   app.onError(errorHandler);
-  app.use('*', secureHeaders())
-  app.use('*', prettyJSON())
+  app.use("*", secureHeaders());
+  app.use("*", prettyJSON());
 
   return app;
 };
