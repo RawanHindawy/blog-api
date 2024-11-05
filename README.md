@@ -4,6 +4,9 @@ A RESTful API for managing a blog system built with Hono and Bun.
 
 ## Features
 
+- Local development setup
+- Database setup (PostgreSQL)
+- Redis setup
 - Category management
 - Post management
 - Comment system
@@ -12,7 +15,10 @@ A RESTful API for managing a blog system built with Hono and Bun.
 - Error handling
 
 ## Prerequisites
-
+- Node.js (v18 or higher)
+- PostgreSQL (v14 or higher)
+- Redis (v6 or higher)
+- TypeScript (v5 or higher)
 - [Bun](https://bun.sh) runtime (v1.1.33 or higher)
 
 ## Installation
@@ -32,6 +38,17 @@ cp .env.example .env
 
 Then edit the `.env` file with your configuration.
 
+## Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+PORT
+DATABASE_URL
+REDIS_URL
+NODE_ENV
+
+```
+    
 ## Database Installation
 
 pull the docker image
@@ -112,3 +129,95 @@ bun run dev
 - `GET /api/tags/:id` - Get tag by ID
 - `PUT /api/tags/:id` - Update tag
 - `DELETE /api/tags/:id` - Delete tag
+
+## API Routes
+
+### Authentication Routes
+
+#### Register User
+```typescript
+POST /auth/register
+Content-Type: application/json
+
+{
+  "username": "string",
+  "email": "string",
+  "password": "string"
+}
+```
+
+#### Login
+```typescript
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "string",
+  "password": "string"
+}
+```
+
+### Blog Posts Routes Example
+
+#### Get All Posts
+```typescript
+GET /posts
+```
+
+#### Get Single Post
+```typescript
+GET /posts/:id
+```
+
+#### Create Post
+```typescript
+POST /posts
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "title": "string",
+  "content": "string"
+}
+```
+
+#### Update Post
+```typescript
+PUT /posts/:id
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "title": "string",
+  "content": "string"
+}
+```
+
+#### Delete Post
+```typescript
+DELETE /posts/:id
+Authorization: Bearer <token>
+```
+
+## Rate Limiting
+
+The API implements rate limiting to prevent abuse. Current settings:
+- Window: 15 minutes
+- Max Requests: 100 per IP
+- Headers: 
+  - `RateLimit-Limit`
+  - `RateLimit-Remaining`
+  - `RateLimit-Reset`
+
+## Error Handling
+
+The API returns standard HTTP status codes:
+
+- 200: Success
+- 201: Created
+- 400: Bad Request
+- 401: Unauthorized
+- 403: Forbidden
+- 404: Not Found
+- 429: Too Many Requests
+- 500: Internal Server Error
