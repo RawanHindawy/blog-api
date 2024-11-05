@@ -9,5 +9,3 @@ export default defineConfig({
     url: config.DATABASE_URL,
   },
 });
-
-

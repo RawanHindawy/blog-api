@@ -29,6 +29,7 @@ bun install
 ```bash
 cp .env.example .env
 ```
+
 Then edit the `.env` file with your configuration.
 
 ## Database Installation
@@ -55,20 +56,25 @@ docker pull redis
 
 docker run -it --rm --link my-redis:redis redis redis-cli -h redis
 ```
+
 ## Database Generate Migrations
 
 ```bash
 bun run db:generate
 ```
+
 or
 
 ```bash
 bun run db:migrate
 ```
+
 ## Usage
 
 ### Development
+
 Run the development server:
+
 ```bash
 bun run dev
 ```
@@ -76,6 +82,7 @@ bun run dev
 ## API Endpoints
 
 ### Categories
+
 - `GET /api/categories` - Get all categories
 - `POST /api/categories` - Create a new category
 - `GET /api/categories/:id` - Get category by ID
@@ -83,6 +90,7 @@ bun run dev
 - `DELETE /api/categories/:id` - Delete category
 
 ### Posts
+
 - `GET /api/posts` - Get all posts
 - `POST /api/posts` - Create a new post
 - `GET /api/posts/:id` - Get post by ID
@@ -90,6 +98,7 @@ bun run dev
 - `DELETE /api/posts/:id` - Delete post
 
 ### Comments
+
 - `GET /api/posts/:id/comments` - Get comments for a post
 - `POST /api/posts/:id/comments` - Add comment to a post
 - `GET /api/comments/:id` - Get comment by ID
@@ -97,6 +106,7 @@ bun run dev
 - `DELETE /api/comments/:id` - Delete comment
 
 ### Tags
+
 - `GET /api/tags` - Get all tags
 - `POST /api/tags` - Create a new tag
 - `GET /api/tags/:id` - Get tag by ID
